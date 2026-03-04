@@ -4,7 +4,9 @@ format: html
 author: Maggie Harings
 ---
 
+
 ## Exercise: Explore, Clean, and Wrangle Data
+
 
 ```{r}
 library(readr)
@@ -54,5 +56,4 @@ sort(unique(lobs.aque.70$SIZE_MM))
 
 
 ```
-
 
