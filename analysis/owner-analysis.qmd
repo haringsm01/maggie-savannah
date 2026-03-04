@@ -1,5 +1,27 @@
 ---
 title: "owner-analysis"
 format: html
+author: Maggie Harings
 ---
+
+## Exercise: Explore, Clean, and Wrangle Data
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(here)
+here()
+
+
+```
+
+```{r}
+lobster_abundance <- read_csv(here("data/Lobster_Abundance_All_Years_20220829.csv"))
+```
+
+```{r}
+
+```
 
