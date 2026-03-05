@@ -1,5 +1,107 @@
 ---
-title: "collaborator-analysis"
+title: "Collaborator Analysis"
 format: html
+author: Savannah Kjaer
 ---
+
+## Exercise: Explore, Clean, and Wrnagle Data
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(tidyr)
+library(here)
+
+```
+
+```{r}
+lobster_traps <- read_csv("../data/Lobster_Trap_Counts_All_Years_20210519.csv")
+#.. goes one folder up
+
+lobster_traps <- read_csv(here("data/Lobster_Trap_Counts_All_Years_20210519.csv"))
+#here tells it to start at the base folder
+
+View(lobster_traps)
+
+```
+
+
+```{r}
+unique(lobster_traps$TRAPS)
+
+#base R, runs
+lobster_traps$TRAPS[lobster_traps$TRAPS == "-99999"] <- NA
+
+#from class example, didn't
+lobster_traps %>%
+  mutate(TRAPS == if_else(TRAPS == "-99999",
+                          true = NA,
+                          false = TRAPS),
+         TRAPS = as.numeric(TRAPS)
+         )
+
+lobster_traps <- lobster_traps %>% 
+    mutate(TRAPS = na_if(TRAPS, -99999))
+```
+
+```{r}
+lobster_traps %>%
+  filter(SITE != "NAPL")
+unique(lobster_traps$SITE)        
+         
+```
+
+```{r}
+carp_20 <- lobster_traps %>%
+  filter(SITE == "CARP" & TRAPS > 20)
+#32 obs
+```
+
+```{r}
+max <- lobster_traps %>%
+  group_by(SITE, MONTH) %>% 
+  summarize(max = max(TRAPS, na.rm=FALSE))
+max
+```
+
+## Exercise: Data Vissualization
+```{r}
+lobster_traps %>%
+  group_by(YEAR) %>% 
+  ggplot(aes(x=TRAPS)) + 
+  geom_histogram() +
+  facet_wrap(~YEAR)
+```
+
+```{r}
+lobster_traps_summarize <- lobster_traps %>% 
+  group_by(SITE, YEAR) %>% 
+  summarize(TOTAL_TRAPS = sum(TRAPS, na.rm=FALSE))
+
+pretty_fig <- lobster_traps_summarize %>% 
+  ggplot(aes(x=YEAR, y=TOTAL_TRAPS, col= SITE)) + 
+  geom_line() +
+  geom_point(aes(alpha = 0.2)) +
+  xlab("Year") +
+  ylab("Total Traps") +
+  theme_bw() 
+ggsave(filename = "../figs/graph.png", pretty_fig, width = 6, height = 4.5, units = "in", device='png')
+```
+
+```{r}
+lobster_traps_fishing_pressure <- lobster_traps %>%
+  filter(YEAR > 2018 & YEAR < 2022) %>% 
+  mutate(FISHING_PRESSURE = if_else(TRAPS >= 8,
+                                    true = "high",
+                                    false = "low")) %>% 
+  group_by(SITE, FISHING_PRESSURE) %>% 
+  summarize(obs=n()) %>% 
+  drop_na()
+View(lobster_traps_fishing_pressure)
+
+lobster_traps_fishing_pressure %>%
+  ggplot(aes(x=SITE, y=obs, fill = FISHING_PRESSURE)) + 
+  geom_col(position = "dodge")
+```
 
