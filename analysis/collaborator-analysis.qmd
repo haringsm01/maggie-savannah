@@ -79,13 +79,14 @@ lobster_traps_summarize <- lobster_traps %>%
   group_by(SITE, YEAR) %>% 
   summarize(TOTAL_TRAPS = sum(TRAPS, na.rm=FALSE))
 
-lobster_traps_summarize %>% 
+pretty_fig <- lobster_traps_summarize %>% 
   ggplot(aes(x=YEAR, y=TOTAL_TRAPS, col= SITE)) + 
   geom_line() +
   geom_point(aes(alpha = 0.2)) +
   xlab("Year") +
   ylab("Total Traps") +
   theme_bw() 
+ggsave(filename = "../figs/graph.png", pretty_fig, width = 6, height = 4.5, units = "in", device='png')
 ```
 
 ```{r}
