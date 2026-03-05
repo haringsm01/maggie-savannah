@@ -94,7 +94,38 @@ lobster_size_lrg <- lobster_abundance.NAs %>%
                               aes(x = SITE,
                                   y = COUNT,
                                   fill = SIZE_BIN)) +
-   geom_col(position = "dodge"))
+    geom_col(position = "dodge") +
+    # add line at y=0
+        geom_hline(yintercept = 0, 
+               color = "white",
+               size = 2) +
+    # modify axes, legend titles
+    labs(x = "Site",
+         y = "Count",
+         fill = "Size bin",
+         title = "Ugly plot of lobster counts!") +
+    # modify legend contents
+    scale_fill_discrete(labels = c("Small (<=70 mm)", "Large >70 mm)")) +
+    theme_classic() +
+    theme(
+      # make background purple
+      panel.background = element_rect(fill = "purple"),
+    ) +
+    # add random asterisk
+    annotate(
+      "text",
+      x = "AQUE",  
+      y = .5 *max(lobster_size_lrg$COUNT),      # vertical position
+      label = "*",                              # add asterisk
+      color = "white",                          # make asterisk white
+      size = 20                                 # enlarge asterisk
+    )
+  )
+
+# save world's ugliest plot
+ggsave("../figs/wordsUgliestPlot.jpg",
+       plot_largeSmall)
+# ggsave(here("figs/wordsUgliestPlot"))
 
 ```
 
